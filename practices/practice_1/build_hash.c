@@ -69,7 +69,7 @@ int build_index() {
         if (fscanf(csv, "%ld,%d,%29[^,],%f,%59[^,],%59[^,],%29[^,],%34[^,],%f,%f,%34[^,],%4[^,],%d,%ld",
             &r.CodigoEstacion, &r.CodigoSensor, r.FechaObservacion,&r.ValorObservado, r.NombreEstacion,
             r.Departamento, r.Municipio, r.ZonaHidrografica, &r.Latitud, &r.Longitud,
-            r.DescripcionSensor, r.UnidadMedida, &r.CodigoEstacion, &r.FechaObservacionNum) != 15){
+            r.DescripcionSensor, r.UnidadMedida, &r.CodigoEstacionNuevo, &r.FechaObservacionNum) != 14){
                 break;
         }
         
