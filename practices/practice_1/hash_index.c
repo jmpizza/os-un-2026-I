@@ -28,13 +28,13 @@ typedef struct {
     long FechaObservacionNum;
 } CompositeKey;
 
-typedef struct {
+typedef struct HashNode{
     CompositeKey key;
     long offset;
-    int occupied;
-} HashEntry;
+    struct HashNode *next;
+} HashNode;
 
-HashEntry hashTable[TABLE_SIZE];
+HashNode hashTable[TABLE_SIZE];
 
 unsigned int hash_function(CompositeKey key){
     unsigned long hash = key.CodigoEstacion;
@@ -45,14 +45,15 @@ unsigned int hash_function(CompositeKey key){
 
 int insert(CompositeKey key, long offset){
     unsigned int index = hash_function(key);
+    HashNode *node = &hashTable[index];
 
-    while (hashTable[index].occupied){
-        index = (index + 1) % TABLE_SIZE;
+    while (node->next != NULL){
+        node = node->next;
     }
 
-    hashTable[index].key = key;
-    hashTable[index].offset = offset;
-    hashTable[index].occupied = 1;
+    node->key = key;
+    node->offset = offset;
+    node->next = NULL;
     return 0;
 }
 
@@ -72,7 +73,7 @@ int save_index(){
         exit(-1);
     }
 
-    fwrite(hashTable, sizeof(HashEntry), sizeof(hashTable), index);
+    fwrite(hashTable, sizeof(HashNode), sizeof(hashTable), index);
 
     fclose(index);
 
