@@ -30,8 +30,12 @@ typedef struct {
 typedef struct HashNode{
     CompositeKey key;
     int64_t offset;
-    struct HashNode *next;
+    int64_t next;
 } HashNode;
+
+typedef struct Bucket {
+    int64_t first;
+} Bucket;
 
 unsigned int hash_function(CompositeKey key);
 

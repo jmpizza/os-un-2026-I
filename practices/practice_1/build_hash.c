@@ -7,20 +7,44 @@
 
 #define BLOCK 200000
 
-HashNode hashTable[TABLE_SIZE];
+Bucket hashBuckets[TABLE_SIZE];
 
-int insert(CompositeKey key, long offset){
+int insert(FILE *f, CompositeKey key, long offset){
+    HashNode node;
     unsigned int index = hash_function(key);
-    HashNode *node = &hashTable[index];
 
-    while (node->next != NULL){
-        node = node->next;
+    Bucket *b = &hashBuckets[index];
+
+    node.key = key;
+    node.offset = offset;
+    node.next = b->first;
+
+    fseek(f, 0, SEEK_END);
+    long node_offset = ftell(f);
+    fwrite(&node, sizeof(HashNode), 1, f);
+
+    b->first = node_offset;
+    
+    long bucket_offset = index * sizeof(Bucket);
+    fseek(f, bucket_offset, SEEK_SET);
+    fwrite(b, sizeof(Bucket), 1, f);
+
+    return 0;
+}
+void create_index(const char *filename){
+    for(int i = 0; i < TABLE_SIZE; i++){
+        hashBuckets[i].first = -1;
     }
 
-    node->key = key;
-    node->offset = offset;
-    node->next = NULL;
-    return 0;
+    FILE *f = fopen(filename,"wb");
+    if(!f){
+        perror("Error creando índice");
+        exit(-1);
+    }
+    for(int i = 0; i < TABLE_SIZE; i++){
+        fwrite(&hashBuckets[i], sizeof(Bucket), 1, f);
+    }
+    fclose(f);
 }
 
 CompositeKey extract_key(Record r){
@@ -31,23 +55,10 @@ CompositeKey extract_key(Record r){
     return key;
 }
 
-int save_index(){
-    FILE *index = fopen("data_index.dat", "w");
-    
-    if(!index){
-        perror("Error al abrir el archivo indice: ");
-        exit(-1);
-    }
-
-    fwrite(hashTable, sizeof(HashNode), TABLE_SIZE, index);
-
-    fclose(index);
-
-    return 0;
-}
-
 int build_index() {
     FILE *csv = fopen("data.csv", "r");
+    FILE *index = fopen("data_index.dat", "r+b");
+
     long offset;
     char header[300];
     Record r;
@@ -74,17 +85,20 @@ int build_index() {
         }
         
         key = extract_key(r);
-        
-        insert(key, offset);
+
+        insert(index, key, offset);
     }
     
+    fclose(index);
     fclose(csv);
 
-    save_index();
+    //save_index();
     return 0;
 }
 
 int main(){
+    create_index("data_index.dat");
+
     build_index();
 
     return 0;
