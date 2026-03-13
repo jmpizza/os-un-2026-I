@@ -122,7 +122,12 @@ int main(){
             );
 
             r = search(keyPtr, "data.csv", "data_index.dat");
-            ptr->resultado = r.ValorObservado;
+            if (r.CodigoEstacion >= 100) {
+				ptr->resultado = r.ValorObservado;
+			} else {
+				ptr->resultado = -1;
+			}
+            
             printf("Valor observado: %.2f\n", r.ValorObservado);
             ptr->listo = 2;
         }
