@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
 #include "hash.h"
+
 
 #define BLOCK 200000
 

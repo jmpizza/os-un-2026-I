@@ -7,14 +7,15 @@
 #include <sys/shm.h>
 #include "hash.h"
 #include "shared.h"
+#include <stdbool.h>
 
 HashNode *hashNode = NULL;
 
-Record search(CompositeKey key, const char *csvFile, const char *indexFile) {
+Record search(CompositeKey *key, const char *csvFile, const char *indexFile) {
     Record r = {0};
     Bucket b;
     HashNode node;
-    unsigned int idx = hash_function(key);
+    unsigned int idx = hash_function(*key);
 
     FILE *index = fopen(indexFile, "rb");
     if (!index) {
@@ -47,9 +48,9 @@ Record search(CompositeKey key, const char *csvFile, const char *indexFile) {
         if (fread(&node, sizeof(HashNode), 1, index) != 1)
             break;
 
-        if (node.key.CodigoEstacionNuevo == key.CodigoEstacionNuevo &&
-            node.key.CodigoSensor == key.CodigoSensor &&
-            node.key.FechaObservacionNum == key.FechaObservacionNum) {
+        if (node.key.CodigoEstacionNuevo == key->CodigoEstacionNuevo &&
+            node.key.CodigoSensor == key->CodigoSensor &&
+            node.key.FechaObservacionNum == key->FechaObservacionNum) {
 
             printf("Offset encontrado %lld\n", (long long)node.offset);
 
@@ -102,19 +103,25 @@ int main(){
         perror("Error en shmat: ");
         exit(-1);
     }
+    
+    CompositeKey *keyPtr;
+    keyPtr = (CompositeKey *)malloc(sizeof(CompositeKey));
+    if (keyPtr == NULL){
+        perror("Error en keyPtr");
+        exit(-1);
+    }
 
     while(true) {
         if (ptr->listo == 1){
-            CompositeKey key;
-            key.CodigoEstacionNuevo = ptr->CodigoEstacionNuevo_id;
-            key.CodigoSensor = ptr->CodigoSensor_id;
-            key.FechaObservacionNum = ptr->FechaObservacionNum_id;
+            keyPtr->CodigoEstacionNuevo = ptr->CodigoEstacionNuevo_id;
+            keyPtr->CodigoSensor = ptr->CodigoSensor_id;
+            keyPtr->FechaObservacionNum = ptr->FechaObservacionNum_id;
 
             printf("Informacion a Buscar Est=%d Sen=%d Fecha=%ld\n",
-                key.CodigoEstacionNuevo, key.CodigoSensor, key.FechaObservacionNum
+                keyPtr->CodigoEstacionNuevo, keyPtr->CodigoSensor, keyPtr->FechaObservacionNum
             );
 
-            r = search(key, "data.csv", "data_index.dat");
+            r = search(keyPtr, "data.csv", "data_index.dat");
             ptr->resultado = r.ValorObservado;
             printf("Valor observado: %.2f\n", r.ValorObservado);
             ptr->listo = 2;
@@ -123,6 +130,7 @@ int main(){
     }
 
     shmdt(ptr);
+    free(keyPtr);
     
     return 0;
 }
