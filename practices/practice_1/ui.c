@@ -149,7 +149,7 @@ int main() {
             if (v_CodigoEstacion == -1 || v_CodigoSensor == -1 || v_FechaObservacionNum == -1) {
                 ImprimeMensaje("\n\tFaltan datos...");
             } else {
-                printf("\n\tBuscando estado...\n");
+                printf("\n\tBuscando valor...\n");
 
                 clock_t start = clock();
 
