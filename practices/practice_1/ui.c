@@ -170,8 +170,8 @@ int main() {
 
                 if (resultado != -1) {
                     sprintf((char *)mensaje,
-                            "Para estacion: %d sencor: %d fecha: %ld\n"
-                            "El Valor Observado es: %f\n"
+                            "Para estacion: %d sensor: %d fecha: %ld\n"
+                            "El valor observado es: %.2f\n"
                             "El tiempo de busqueda fue: %.6f segundos\n",
                             v_CodigoEstacion, v_CodigoSensor, v_FechaObservacionNum, resultado, tiempo);
                 } else {
