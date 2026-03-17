@@ -31,11 +31,11 @@ Luego iniciar el cliente:
 
 ## 4. Uso
 En el cliente se visualizaran las siguientes opciones:
-    - 1. Ingresar Codigo de Estacion (10-521)
-    - 2. Ingresar Codigo de Sensor (68/71)
-    - 3. Ingresar Codigo de Fecha (202501010000-202512312358)
-    - 4. buscar Valor observado
-    - 5. salir del Programa
+1. Ingresar Codigo de Estacion (10-521)
+2. Ingresar Codigo de Sensor (68/71)
+3. Ingresar Codigo de Fecha (202501010000-202512312358)
+4. buscar Valor observado
+5. salir del Programa
 
 El servidor responderá con el valor Observado utilizando la estructura .h
 
