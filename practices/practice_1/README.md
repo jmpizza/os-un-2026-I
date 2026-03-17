@@ -57,6 +57,8 @@ El servidor responderá con el valor Observado utilizando la estructura .h
 6. Autores 
 -----------------------
 Laura Natalia Duarte Acero
+
 Juan Manuel Espitia Pizza
+
 Sebastian Steeven Rodriguez Ortiz
 
